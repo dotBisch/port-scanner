@@ -1,8 +1,14 @@
 from flask import Flask, request, jsonify, render_template_string
 from secure_port_scanner import SecurePortScanner
 import time
+import os
 
 app = Flask(__name__)
+
+# Production configuration
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
+DEBUG = os.environ.get('FLASK_ENV') != 'production'
+PORT = int(os.environ.get('PORT', 5000))
 
 # Rate limiting storage (in production, use Redis or database)
 request_history = {}
@@ -145,4 +151,4 @@ def scan_ports():
 if __name__ == '__main__':
     print("⚠️  Educational Port Scanner - Use Responsibly")
     print("📚 Only scan systems you own or have permission to test")
-    app.run(debug=True, host='127.0.0.1', port=5000)
+    app.run(debug=DEBUG, host='0.0.0.0', port=PORT)
